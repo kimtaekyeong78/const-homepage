@@ -1,8 +1,7 @@
 @charset "UTF-8";
-/* src/styles/global.scss
-   CONST landing – navy + charcoal + red accent (sample style)
-*/
+/* src/styles/global.scss (전체 교체) */
 :root {
+  --font-brand: "Montserrat", "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   /* Background (deep navy) */
   --bg: #0b1220;
   --bg-2: #0e1628;
@@ -15,8 +14,7 @@
   /* Text */
   --text: rgba(255, 255, 255, 0.92);
   --muted: rgba(255, 255, 255, 0.66);
-  --faint: rgba(255, 255, 255, 0.52);
-  /* Accent (mint like sample) */
+  /* Accent */
   --accent: #00ffaa;
   --accent-2: #33e0c2;
   --accent-soft: rgba(0, 212, 170, 0.16);
@@ -28,10 +26,18 @@
   --max: 1120px;
   /* Typography */
   --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo";
+  /* Section tints (App.vue에서 사용) */
+  --sec-hero: rgba(0, 0, 0, 0.7);
+  --sec-about: rgba(255, 255, 255, 1);
+  --sec-services: rgba(0, 146, 146, 1);
+  --sec-portfolio: rgba(255, 255, 255, 1);
+  --sec-contact: rgba(0, 0, 0, 0.8);
+  --sec-divider: rgba(255, 255, 255, 0.06);
 }
 
-/* Reset */
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -40,234 +46,38 @@ html {
   scroll-padding-top: 80px; /* 네비게이션 높이 + 여유 */
 }
 
-/* 접근성 개선 */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .page {
-    scroll-snap-type: none;
-  }
-  .section {
-    scroll-snap-align: none;
-  }
-}
-/* 터치 디바이스 최적화 */
-@media (hover: none) and (pointer: coarse) {
-  .section {
-    scroll-snap-align: start; /* 모바일에서는 모든 섹션 스냅 */
-  }
 }
 body {
   margin: 0;
-  font-family: var(--font);
+  font-family: var(--font-brand);
   color: var(--text);
   background: radial-gradient(1100px 700px at 20% 10%, rgba(255, 255, 255, 0.06), transparent 60%), radial-gradient(900px 700px at 85% 15%, rgba(255, 255, 255, 0.04), transparent 60%), linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0)), var(--bg);
 }
 
-img {
-  max-width: 100%;
-  display: block;
+/* page 스크롤은 App.vue(.page)가 담당 */
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
 }
 
 a {
   color: inherit;
-  text-decoration: none;
 }
 
-button,
-input,
-textarea {
+button {
   font-family: inherit;
 }
 
-/* Layout helpers */
-.container {
-  width: 100%;
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.section {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 100vh !important;
-  padding: 0 !important;
-  scroll-snap-align: start !important;
-}
-.section.about {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.95);
-}
-.section.services {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.95);
-}
-@media (max-width: 768px) {
-  .section {
-    padding: 72px 0;
-  }
-}
-/* Typography blocks */
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.h2 {
-  margin: 14px 0 10px;
-  font-weight: normal;
-  font-size: clamp(24px, 3.1vw, 40px);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-.p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.8;
-}
-
-/* Cards */
-.card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-}
-
-/* Buttons (sample-ish: compact, slightly squared, red accent) */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 18px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
-  cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--border-strong);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.btn:active {
-  transform: translateY(0px);
-}
-
-.btnPrimary {
-  border-color: var(--accent);
-  background: rgba(0, 255, 170, 0.2);
-  color: rgba(255, 255, 255, 0.95);
-}
-
-.btnPrimary:hover {
-  border-color: var(--accent-2);
-  background: rgba(51, 224, 194, 0.3);
-}
-
-/* Accent dot (keeping class name to avoid touching templates) */
-.mintDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 6px rgba(0, 212, 170, 0.14);
-}
-
-/* Divider */
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-}
-
-/* Pills / tags (neutral, subtle) */
-.pill {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.72);
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 8px 12px;
-  border-radius: 999px;
-}
-
-/* Links with red hover accent */
-.linkAccent {
-  color: rgba(255, 255, 255, 0.86);
-  transition: color 180ms ease;
-}
-
-.linkAccent:hover {
-  color: var(--accent);
-}
-
-/* Utility: subtle panel background (if needed in sections) */
-.panelBg {
-  background: linear-gradient(180deg, rgba(14, 22, 40, 0.55), rgba(14, 22, 40, 0.15));
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-/* Selection (optional polish) */
-::-moz-selection {
-  background: rgba(0, 212, 170, 0.28);
-}
-::selection {
-  background: rgba(0, 212, 170, 0.28);
-}
-
-/* Right Carousel */
-.right-carousel {
-  position: fixed;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 200px;
-  height: 400px;
-  z-index: 10;
-}
-
-.carousel-swiper {
-  height: 100%;
-}
-
-.carousel-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.carousel-item img {
-  width: 100%;
-  height: 200px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.carousel-item h4 {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text);
-  text-align: center;
+img {
+  max-width: 100%;
+  height: auto;
 }/*# sourceMappingURL=global.css.map */
