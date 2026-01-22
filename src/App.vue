@@ -1,6 +1,12 @@
 <!-- src/App.vue -->
 <template>
-	<div class="page isPortfolioAll" ref="pageEl">
+	<div v-if="isLoading" class="loadingOverlay">
+		<div class="loadingCenter">
+			<div class="spinner" aria-hidden="true"></div>
+			<img src="@/assets/images/const_logo.png" alt="CONST" class="loadingLogo" />
+		</div>
+	</div>
+	<div class="page isPortfolioAll" ref="pageEl" :class="{ 'is-loaded': !isLoading }">
 		<!-- Right carousel (custom) -->
 		<!--<div v-if="isDesktop && !isPortfolioAll" class="right-carousel" aria-label="Section navigation">
 			<div class="rcList">
@@ -362,6 +368,8 @@ import portfolio09 from '@/assets/images/portfolio_09.png';
 
 const pageEl = ref(null);
 const isDesktop = ref(false);
+const isLoading = ref(true);
+let loadingSafetyTimer = null;
 
 const isPortfolioAll = ref(false);
 
@@ -651,6 +659,18 @@ function backFromAll() {
 }
 
 onMounted(() => {
+	const hideNow = () => {
+		isLoading.value = false;
+		window.removeEventListener('load', handleLoad);
+		window.clearTimeout(loadingSafetyTimer);
+	};
+	const handleLoad = () => {
+		window.clearTimeout(loadingSafetyTimer);
+		window.setTimeout(hideNow, 1500); // hide 1.5s after all resources loaded
+	};
+	loadingSafetyTimer = window.setTimeout(hideNow, 8000); // safety timeout
+	window.addEventListener('load', handleLoad, { once: true });
+
 	updateDevice();
 	window.addEventListener('resize', updateDevice, { passive: true });
 
@@ -664,6 +684,7 @@ onBeforeUnmount(() => {
 	window.removeEventListener('resize', updateDevice);
 	window.clearTimeout(unlockTimer);
 	window.clearTimeout(hintTimer);
+	window.clearTimeout(loadingSafetyTimer);
 
 	destroyObserver();
 });
@@ -768,6 +789,12 @@ h2 {
 	scroll-behavior: smooth;
 	scroll-padding-top: 72px;
 	-webkit-overflow-scrolling: touch;
+	opacity: 0;
+	transition: opacity 0.6s ease;
+
+	&.is-loaded {
+		opacity: 1;
+	}
 
 	/* 스크롤바 숨김 (Chrome, Edge, Safari) */
 	&::-webkit-scrollbar {
@@ -1080,6 +1107,43 @@ h2 {
 	}
 	100% {
 		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+	}
+}
+
+/* Loading overlay */
+.loadingOverlay {
+	position: fixed;
+	inset: 0;
+	z-index: 120;
+	display: grid;
+	place-items: center;
+	background: #0b0b0f;
+}
+.loadingCenter {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.loadingLogo {
+	width: 140px;
+	height: auto;
+	position: relative;
+	z-index: 2;
+}
+.spinner {
+	position: absolute;
+	width: 80px;
+	height: 80px;
+	border: 4px solid rgba(255, 255, 255, 0.12);
+	border-top-color: #00c8ff;
+	border-radius: 50%;
+	animation: spin 0.9s linear infinite;
+	z-index: 1;
+}
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
 	}
 }
 
@@ -1463,8 +1527,8 @@ h2 {
 		}
 
 		.servicesGrid {
-			display: flex;
-			flex-direction: column;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
 			gap: 14px;
 
 			.serviceCard {
@@ -1939,9 +2003,6 @@ h2 {
 	.aboutGrid {
 		grid-template-columns: 1fr;
 	}
-	.servicesGrid {
-		grid-template-columns: 1fr 1fr;
-	}
 	.contactGrid {
 		grid-template-columns: 1fr;
 	}
@@ -2036,7 +2097,8 @@ h2 {
 
 	/* Services 섹션 */
 	.servicesGrid {
-		grid-template-columns: 1fr;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 		gap: 12px;
 		.serviceCard {
 			width: 100%;
@@ -2239,8 +2301,6 @@ h2 {
 			}
 		}
 		.servicesGrid {
-			grid-template-columns: 1fr;
-			gap: 10px;
 			.card {
 				padding: 12px;
 			}
